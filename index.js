@@ -111,10 +111,35 @@ const createMultipleShows = async () => {
     console.log("All TV Shows Saved!");
 };
 
-//Read all shows
-app.get("/shows", async (req, res) => {
-    const show = await TVShow.find({});
+
+
+//Read shows by id
+app.get("/shows/:id", async (req, res) => {
+    const show = await TVShow.findById(req.params.id);
     res.json(show);
+});
+
+//Read shows
+app.get("/shows", async (req, res) => {
+        const { genre, rating, premiere_year } = req.query;
+
+        const filter = {};
+
+        if (genre) {
+            filter.genre = genre;
+        }
+
+        if (rating) {
+            filter.rating = { $gt: Number(rating) };
+        }
+
+        if (premiere_year) {
+            filter.premiere_year = { $gt: Number(premiere_year) };
+        }
+
+        const shows = await TVShow.find(filter);
+        res.json(shows);
+
 });
 
 //Add new show
